@@ -44,9 +44,15 @@
           @click="$emit('click:cancel')" 
         >CANCEL</b-button>
         <b-button 
+          v-if="!isEditable"
           type="is-dark"
           expanded 
           @click="create" >ADD</b-button>
+        <b-button 
+          v-else
+          type="is-dark"
+          expanded 
+          @click="update" >UPDATE</b-button>
       </div>
     </div>
   </div>
@@ -69,9 +75,21 @@
     },
   
     computed: {
+      isEditable() {
+        return !!this.item?.title
+      }
+    },
+
+    created() {
+      this.preselect(this.item)
     },
   
     methods: {
+      preselect(item) {
+        console.log(item)
+        this.shift = structuredClone(this.isEditable ? item : DEFAULT_SHIFT())
+        this.shiftDates = this.shift.dates.map(date => date.date)
+      },
       selectDates(dates) {
         
         this.shiftDates = dates
@@ -84,7 +102,7 @@
         if(newDates.length) this.addDates(newDates)
        
       },
-  
+
       addDates(dates) {
         dates.forEach(date => this.shift.dates.push(DEFAULT_SHIFT_DATE(date)))
       },
@@ -92,11 +110,12 @@
       create() {
         this.$emit('click:add', this.shift)
       },
+
+      update() {
+        this.$emit('click:update', this.shift)
+      },
       
-      removeShiftDate( index) {
-        this.shiftDates.splice(index, 1)
-        this.shift.dates.splice(index, 1)
-      }
+      
      
     }
   }
@@ -104,7 +123,8 @@
   
   <style lang="scss">
   .sidebar {
- 
+    padding-top: 16px;
+    padding-bottom: 90px;
     &__section {
       padding-left: 16px;
       padding-right: 16px;
