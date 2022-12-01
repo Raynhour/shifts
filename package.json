@@ -18,9 +18,11 @@
     "dayjs": "^1.11.6",
     "nuxt": "^2.15.8",
     "nuxt-buefy": "^0.4.24",
+    "vee-validate": "3",
     "vue": "^2.7.10",
     "vue-server-renderer": "^2.7.10",
-    "vue-template-compiler": "^2.7.10"
+    "vue-template-compiler": "^2.7.10",
+    "vuex-map-fields": "^1.4.1"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

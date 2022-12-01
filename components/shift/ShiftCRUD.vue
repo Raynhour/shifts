@@ -4,23 +4,30 @@
       <UiTitle>Create</UiTitle>
     </div>
     <div class="sidebar__section">
-      <form>
-        <b-field label="Title">
-          <b-input v-model="shift.title" ></b-input>
-        </b-field>
+      <ValidationObserver ref="form" tag="form">
+        <ValidationProvider v-slot="{errors}" rules="required" name="title">
+          <b-field label="Title" :type="errors.length ? 'is-danger' : ''" :message="errors[0]">
+            <b-input v-model="shift.title" ></b-input>
+          </b-field>
+        </ValidationProvider>
         <b-field label="Description">
           <b-input v-model="shift.description" maxlength="200" type="textarea"></b-input>
         </b-field>
-        <b-field label="Dates">
-          <b-datepicker
-            v-model="shiftDates"
-            icon-right="calendar-today"
-            placeholder="Click to select..."
-            position="is-top-right"
-            multiple
-            @input="selectDates">
-          </b-datepicker>
-        </b-field>
+        <ValidationProvider v-slot="{errors}" rules="required" name="dates">
+          <b-field
+            label="Dates"
+            :type="errors.length ? 'is-danger' : ''" :message="errors[0]"
+          >
+            <b-datepicker
+              v-model="shiftDates"
+              icon-right="calendar-today"
+              placeholder="Click to select..."
+              position="is-top-right"
+              multiple
+              @input="selectDates">
+            </b-datepicker>
+          </b-field>
+        </ValidationProvider>
         <div>
           <ShiftDateForm
             v-for="(item, index) in shift.dates"
@@ -34,7 +41,7 @@
             @click:remove="removeShiftDate(index)"
           />
         </div>
-      </form>
+      </ValidationObserver>
       <div class="sidebar__actions">
         <b-button 
           class="mr-2"
@@ -59,9 +66,15 @@
   </template>
   
   <script>
+  import { ValidationProvider, ValidationObserver} from 'vee-validate';
   import { DEFAULT_SHIFT, DEFAULT_SHIFT_DATE } from '~/utils/const'
+
   
   export default {
+
+    components: {
+      ValidationObserver, ValidationProvider
+    },
     props: {
       item: {
         type: Object
@@ -107,8 +120,14 @@
         dates.forEach(date => this.shift.dates.push(DEFAULT_SHIFT_DATE(date)))
       },
   
-      create() {
-        this.$emit('click:add', this.shift)
+      async create() {
+        try {
+          const valid = await this.$refs.form.validate()
+          if(!valid) throw Error
+          this.$emit('click:add', this.shift)
+        } catch (error) {
+          alert('some fields invalid')
+        }
       },
 
       update() {

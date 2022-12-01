@@ -1,5 +1,6 @@
 <template>
 <main>
+  <AppFilters />
   <AppShifts />
 </main>
 </template>

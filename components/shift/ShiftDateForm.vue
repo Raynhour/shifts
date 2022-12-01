@@ -47,10 +47,10 @@
                 @input="updateField('type', $event)"
               >
                   <option
-                      v-for="option in $options.SHIFT_TYPES_LIST"
-                      :key="option.value"
-                      :value="option.value">
-                      {{ option.label }}
+                    v-for="option in $options.SHIFT_TYPES_LIST"
+                    :key="option.value"
+                    :value="option.value">
+                    {{ option.label }}
                   </option>
               </b-select>
           </b-field>

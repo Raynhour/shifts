@@ -37,6 +37,8 @@
       </template>
       <slot>
         <UiTitle tag="h3">Dates</UiTitle>
+        <div v-if="!shift.dates.length">Please, change the price to see dates</div>
+
         <ShiftDate v-for="(item, dateIndex) in shift.dates" :key="dateIndex" :item="item" class="my-2" />
         
       </slot>
@@ -81,7 +83,6 @@ export default {
     },
 
     edit(item, index) {
-      console.log(item)
       for(const field in item) {
         if(field in this.selectedShift) this.selectedShift[field] = item[field]
       }
