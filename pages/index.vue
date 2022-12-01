@@ -1,6 +1,6 @@
 <template>
 <main>
-
+  <AppShifts />
 </main>
 </template>
 

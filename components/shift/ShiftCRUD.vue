@@ -1,0 +1,123 @@
+<template>
+  <div class="sidebar">
+    <div class="sidebar__section">
+      <UiTitle>Create</UiTitle>
+    </div>
+    <div class="sidebar__section">
+      <form>
+        <b-field label="Title">
+          <b-input v-model="shift.title" ></b-input>
+        </b-field>
+        <b-field label="Description">
+          <b-input v-model="shift.description" maxlength="200" type="textarea"></b-input>
+        </b-field>
+        <b-field label="Dates">
+          <b-datepicker
+            v-model="shiftDates"
+            icon-right="calendar-today"
+            placeholder="Click to select..."
+            position="is-top-right"
+            multiple
+            @input="selectDates">
+          </b-datepicker>
+        </b-field>
+        <div>
+          <ShiftDateForm
+            v-for="(item, index) in shift.dates"
+            :key="index"
+            :item="item"
+            :start-time.sync="item.startTime"
+            :end-time.sync="item.endTime"
+            :price.sync="item.price"
+            :type.sync="item.type"
+            class="mt-2 mb-2"
+            @click:remove="removeShiftDate(index)"
+          />
+        </div>
+      </form>
+      <div class="sidebar__actions">
+        <b-button 
+          class="mr-2"
+          type="is-dark" 
+          expanded 
+          outlined 
+          @click="$emit('click:cancel')" 
+        >CANCEL</b-button>
+        <b-button 
+          type="is-dark"
+          expanded 
+          @click="create" >ADD</b-button>
+      </div>
+    </div>
+  </div>
+  </template>
+  
+  <script>
+  import { DEFAULT_SHIFT, DEFAULT_SHIFT_DATE } from '~/utils/const'
+  
+  export default {
+    props: {
+      item: {
+        type: Object
+      }
+    },
+    data: function() {
+      return {
+        shiftDates: [],
+        shift: DEFAULT_SHIFT()
+      }
+    },
+  
+    computed: {
+    },
+  
+    methods: {
+      selectDates(dates) {
+        
+        this.shiftDates = dates
+        if(!this.shift.dates.length) return this.addDates(dates)
+        const newDates = dates.filter(date => !this.shift.dates.some(shiftDate => shiftDate.date === date))
+        this.shift.dates.forEach((shiftDate, index) => {
+          const isDateRemoved = !dates.includes(shiftDate.date)
+          if(isDateRemoved)  this.shift.dates.splice(index, 1);
+        })
+        if(newDates.length) this.addDates(newDates)
+       
+      },
+  
+      addDates(dates) {
+        dates.forEach(date => this.shift.dates.push(DEFAULT_SHIFT_DATE(date)))
+      },
+  
+      create() {
+        this.$emit('click:add', this.shift)
+      },
+      
+      removeShiftDate( index) {
+        this.shiftDates.splice(index, 1)
+        this.shift.dates.splice(index, 1)
+      }
+     
+    }
+  }
+  </script>
+  
+  <style lang="scss">
+  .sidebar {
+ 
+    &__section {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    &__actions {
+      z-index: 10;
+      position: fixed;
+      width: $sidebar-width;
+      padding: 16px;
+      right: 0;
+      background: whitesmoke;
+      bottom: 0px;
+      display: flex;
+    }
+  }
+  </style>
